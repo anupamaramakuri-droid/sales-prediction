@@ -1,0 +1,116 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyOq13uIfQGPtMB9zMRPMU+D",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/anupamaramakuri-droid/sales-prediction/blob/main/sales%20prediction%20.%20ipynb\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import pandas as pd\n",
+        "from sklearn.linear_model import LinearRegression\n",
+        "from sklearn.metrics import mean_absolute_error\n",
+        "import joblib\n",
+        "import zipfile\n",
+        "import os\n",
+        "\n",
+        "# Load Dataset\n",
+        "# The original path '/content/sample_data' caused an IsADirectoryError.\n",
+        "# Assuming 'Advertising.csv' is the intended dataset, which is likely inside the provided zip file.\n",
+        "# Extract 'Advertising.csv' from 'archive (9) (1).zip'\n",
+        "zip_path = '/content/archive (9) (1).zip'\n",
+        "output_dir = '/content/'\n",
+        "\n",
+        "with zipfile.ZipFile(zip_path, 'r') as zip_ref:\n",
+        "    zip_ref.extract('Advertising.csv', output_dir)\n",
+        "\n",
+        "df = pd.read_csv(os.path.join(output_dir, 'Advertising.csv'))\n",
+        "\n",
+        "# Features and Target\n",
+        "X = df[['TV', 'Radio', 'Newspaper']]\n",
+        "y = df['Sales']\n",
+        "\n",
+        "# Train Model\n",
+        "model = LinearRegression()\n",
+        "model.fit(X, y)\n",
+        "\n",
+        "# Save Model\n",
+        "joblib.dump(model, \"sales_model.pkl\")\n",
+        "\n",
+        "print(\"Model Saved Successfully\")\n",
+        "\n",
+        "# Load Saved Model\n",
+        "model = joblib.load(\"sales_model.pkl\")\n",
+        "\n",
+        "# User Input Values\n",
+        "tv = 230.1\n",
+        "radio = 37.8\n",
+        "newspaper = 69.2\n",
+        "\n",
+        "# Create DataFrame\n",
+        "input_data = pd.DataFrame({\n",
+        "    'TV': [tv],\n",
+        "    'Radio': [radio],\n",
+        "    'Newspaper': [newspaper]\n",
+        "})\n",
+        "\n",
+        "# Predict Sales\n",
+        "prediction = model.predict(input_data)\n",
+        "\n",
+        "print(\"\\nSales Prediction App\")\n",
+        "print(\"--------------------\")\n",
+        "print(\"TV Advertising Budget:\", tv)\n",
+        "print(\"Radio Advertising Budget:\", radio)\n",
+        "print(\"Newspaper Advertising Budget:\", newspaper)\n",
+        "print(f\"\\nPredicted Sales = {prediction[0]:.2f}\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "Wet8Wih4NdfP",
+        "outputId": "423069bc-4d9a-4f0f-fbf6-9eabbdc5cfae"
+      },
+      "execution_count": 21,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Model Saved Successfully\n",
+            "\n",
+            "Sales Prediction App\n",
+            "--------------------\n",
+            "TV Advertising Budget: 230.1\n",
+            "Radio Advertising Budget: 37.8\n",
+            "Newspaper Advertising Budget: 69.2\n",
+            "\n",
+            "Predicted Sales = 20.52\n"
+          ]
+        }
+      ]
+    }
+  ]
+}
